@@ -16,7 +16,13 @@
     stroke: black !important;
 }
 
-
+.bgimg{
+  background-image: url('https://cdn.britannica.com/94/192794-050-3F3F3DDD/panels-electricity-order-sunlight.jpg');
+  background-position: center !important;
+  background-repeat: no-repeat;
+  background-size: cover;
+  
+}
 
 body{
   background-color: #eff8f3;
@@ -39,4 +45,25 @@ input[type=number] {
 }
 /* hide input arrow  */
 
+.custom-shape-divider-top-1722285751 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+  z-index: -1;
+  height: 600px;
+}
 
+.custom-shape-divider-top-1722285751 svg {
+  position: relative;
+  display: block;
+  width: calc(190% + 1.3px);
+  height: 600px;
+}
+
+.custom-shape-divider-top-1722285751 .shape-fill {
+  fill: #50E3C2;
+}

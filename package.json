@@ -9,13 +9,28 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "chart.js": "^4.4.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.16.0",
+    "@mui/material": "^5.16.0",
+    "axios": "^1.7.2",
+    "bcrypt": "^5.1.1",
+    "chart.js": "^4.4.3",
+    "crypto-js": "^4.2.0",
+    "formik": "^2.4.6",
     "india-pincode-search": "^1.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.4",
     "next": "14.2.3",
+    "nodemailer": "^6.9.14",
+    "nookies": "^2.5.2",
     "react": "^18",
     "react-dom": "^18",
+    "react-hot-toast": "^2.4.1",
     "react-icons": "^5.2.1",
-    "react-toastify": "^10.0.5"
+    "typed.js": "^2.1.0",
+    "vercel": "^34.2.8",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "postcss": "^8",

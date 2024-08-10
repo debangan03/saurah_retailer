@@ -1,9 +1,12 @@
 import React from "react";
 import RetailerRegistrationForm from "./RetailerRegistrationForm";
+import NavbarMain from "@/app/Components/Navbar/NavbarMain";
+import Footer from "@/app/Components/Footer/Footer";
 
 function page() {
   return (
     <div>
+      <NavbarMain/>
       <div className="text-center mt-10">
         <h1 className="text-3xl text-teal-500 font-sans font-semibold ">Welcome To Saurah</h1>
         <p className="mt-2 italic ">
@@ -17,6 +20,7 @@ function page() {
           </div>
       </div>
       <RetailerRegistrationForm />
+      <Footer/>
     </div>
   );
 }

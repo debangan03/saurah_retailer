@@ -1,121 +1,170 @@
-"use client"
-import Link from 'next/link';
-import React, { useState } from 'react';
+"use client";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/Context/AuthContext";
+import { toast, Toaster } from 'react-hot-toast';
 
 function RetailerRegistrationForm() {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        registrationNo: '',
-        panNo: '',
-        mobileNo: '',
-        otp: ''
+  const router = useRouter();
+  const session = useAuth();
+  
+  useEffect(() => {
+    if (session.user) {
+      toast("Already logged in");
+      setTimeout(() => {
+        router.push('/');
+      }, 400);
+    }
+  }, [session.user, router]);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    registrationNo: "",
+    panNo: "",
+    gstNo: "",
+    mobileNo: "",
+    password: "",
+    otp: "",
+  });
+
+  const [otpSent, setOtpSent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
     });
+  };
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Form Data Submitted: ", formData);
-        // Add your code here to submit this data to a backend or API
-    };
+    const { name, email, registrationNo, panNo, gstNo, mobileNo, password } = formData;
 
-    return (
-        <div className="max-w-lg mx-auto my-6 p-4 border shadow-md border-gray-400  rounded-lg  ">
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <h2 className='text-xl font-semibold '>Retailer Registration</h2>
-                <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                        Retailer Name
-                    </label>
-                    <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="registrationNo" className="block text-sm font-medium text-gray-700">
-                        Registration Number
-                    </label>
-                    <input
-                        type="text"
-                        name="registrationNo"
-                        id="registrationNo"
-                        value={formData.registrationNo}
-                        onChange={handleChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="panNo" className="block text-sm font-medium text-gray-700">
-                        PAN No
-                    </label>
-                    <input
-                        type="text"
-                        name="panNo"
-                        id="panNo"
-                        value={formData.panNo}
-                        onChange={handleChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
-                    />
-                </div>
-                <div>
-                    <label htmlFor="mobileNo" className="block text-sm font-medium text-gray-700">
-                        Mobile No
-                    </label>
-                    <input
-                        type="tel"
-                        name="mobileNo"
-                        id="mobileNo"
-                        value={formData.mobileNo}
-                        onChange={handleChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
-                    />
-                </div>
-                {/* <div>
-                    <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
-                        OTP
-                    </label>
-                    <input
-                        type="text"
-                        name="otp"
-                        id="otp"
-                        value={formData.otp}
-                        onChange={handleChange}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
-                    />
-                </div> */}
-                  <p className='text-[.8rem] '>Already have an account <Link className='text-teal-500 underline font-semibold' href="/RetailerLogin">Login</Link></p>
-                <div>
-                    <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-                        Register
-                    </button>
-                </div>
-            </form>
-        </div>
-    );
+    toast.loading('Sending OTP...');
+    try {
+      const response = await fetch("/api/sendotp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, registrationNo, panNo, gstNo, mobileNo, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send OTP");
+      }
+
+      setOtpSent(true);
+      toast.dismiss();
+      toast.success("OTP sent to your email");
+    } catch (error) {
+      console.error("Error:", error);
+      toast.dismiss();
+      toast.error("Error sending OTP");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const { email, otp, name, registrationNo, panNo, gstNo, mobileNo, password } = formData;
+
+    toast.loading('Verifying OTP...');
+    try {
+      const response = await fetch("/api/verifyotp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, otp, name, registrationNo, panNo, gstNo, mobileNo, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to verify OTP");
+      }
+
+      const data = await response.json();
+      localStorage.setItem('token', data.token);
+
+      toast.dismiss();
+      toast.success("OTP verified successfully. Registration complete.");
+      window.location = '/'; // Redirect to the desired page after registration
+    } catch (error) {
+      console.error("Error:", error);
+      toast.dismiss();
+      toast.error("Error verifying OTP");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="lg:mx-auto max-w-7xl my-6 p-4 border shadow-md border-gray-400 rounded-lg mx-10">
+      <Toaster />
+      <h2 className="text-xl font-semibold">Retailer Registration</h2>
+      {!otpSent ? (
+        <form onSubmit={handleSubmit}>
+          <div className="lg:grid lg:grid-cols-2 gap-6 mb-4">
+            {/* Form fields */}
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Retailer Name</label>
+              <input placeholder="fill your credentials" type="text" name="name" id="name"  value={formData.name} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+              <input placeholder="fill your credentials" type="email" name="email" id="email" value={formData.email} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+            </div>
+            <div>
+              <label htmlFor="registrationNo" className="block text-sm font-medium text-gray-700">Registration Number</label>
+              <input placeholder="fill your credentials" type="text" name="registrationNo" id="registrationNo" value={formData.registrationNo} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+            </div>
+            <div>
+              <label htmlFor="panNo" className="block text-sm font-medium text-gray-700">PAN No</label>
+              <input placeholder="fill your credentials" type="text" name="panNo" id="panNo" value={formData.panNo} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+            </div>
+            <div>
+              <label htmlFor="gstNo" className="block text-sm font-medium text-gray-700">GST No</label>
+              <input placeholder="fill your credentials" type="text" name="gstNo" id="gstNo" value={formData.gstNo} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+            </div>
+            <div>
+              <label htmlFor="mobileNo" className="block text-sm font-medium text-gray-700">Mobile No</label>
+              <input placeholder="fill your credentials" type="tel" name="mobileNo" id="mobileNo" value={formData.mobileNo} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+              <input placeholder="fill your credentials" type="password" name="password" id="password" value={formData.password} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+            </div>
+          </div>
+          <p className="text-[.8rem] pl-1 mb-1">Already have an account <Link className="text-teal-500 underline font-semibold " href="/RetailerLogin">Login</Link></p>
+          <div>
+            <button type="submit" disabled={isSubmitting} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+              {isSubmitting ? 'Loading...' : 'Register'}
+            </button>
+          </div>
+        </form>
+      ) : (
+        <form onSubmit={handleOtpSubmit}>
+          <div className="mb-4">
+            <label htmlFor="otp" className="block text-sm font-medium text-gray-700">OTP</label>
+            <input placeholder="fill your credentials" type="text" name="otp" id="otp" value={formData.otp} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+          </div>
+          <div>
+            <button type="submit" disabled={isSubmitting} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+              {isSubmitting ? 'Loading...' : 'Verify OTP'}
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
 }
 
 export default RetailerRegistrationForm;

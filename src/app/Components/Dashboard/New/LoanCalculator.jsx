@@ -54,7 +54,7 @@ function LoanCalculator() {
                   <button
                     type="button"
                     onClick={triggercal}
-                    className="text-teal-900  block absolute bottom-2 right-0 w-fit hover:scale-95 hover:bg-transparent hover:text-white hover:border-2 hover:border-white h-fit  border-1 bg-white rounded-full font-semibold text-md p-2.5 text-center "
+                    className="text-teal-900   block absolute bottom-2 right-0 w-fit hover:scale-95 hover:bg-transparent hover:text-white hover:border-2 hover:border-white h-fit  border-1 bg-white rounded-full font-semibold text-sm p-2.5 text-center "
                   >
                     Calculate Now
                   </button>
@@ -69,7 +69,7 @@ function LoanCalculator() {
                   />
                   <label
                     htmlFor="loanamount"
-                    className="peer-focus:font-medium absolute text-[0.675rem] md:text-sm text-gray-100  duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-gray-300 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                    className="peer-focus:font-medium absolute text-[0.5rem] md:text-sm text-gray-100  duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-gray-300 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                   >
                     Monthly Electricity Bill (in ₹)
                   </label>

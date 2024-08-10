@@ -1,145 +1,171 @@
+// components/NavbarMain.js
 "use client";
 import React, { useState, useEffect } from "react";
-import { CiLocationOn } from "react-icons/ci";
-import { IoCallOutline } from "react-icons/io5";
-import LogoutNav from "./LogoutNav";
-import LoginNav from "./LoginNav";
-import Navcontroller from "./Navcontroller";
-import { AiOutlineCloseCircle } from "react-icons/ai";
+
+import { MdAccountCircle } from "react-icons/md";
+import Link from "next/link";
+import { CgMenuGridO, CgClose } from "react-icons/cg";
+import { Toaster, toast } from "react-hot-toast";
+import { useAuth } from "@/app/Context/AuthContext";
 var query = require("india-pincode-search");
 
-let token;
 let place;
+
 function NavbarMain() {
-  const [checklogin, setchecklogin] = useState(false);
-  const [pincode, setpincode] = useState("");
-  const [validpincode, setvalidpincode] = useState(true);
-  //const [place, setplace] = useState("");
-  const [location, setlocation] = useState(false);
-  const locationclicked = () => {
-    setlocation(true);
+  const { user, setUser,loading } = useAuth();
+  const [mobile, setMobile] = useState(false);
+  const [accountDropdown, setAccountDropdown] = useState(false);
+  const [pincode, setPincode] = useState("");
+  const [validPincode, setValidPincode] = useState(true);
+  const [location, setLocation] = useState(false);
+
+  const locationClicked = () => {
+    setLocation(true);
   };
 
-  const locationclosed = () => {
-    setlocation(false);
+  const locationClosed = () => {
+    setLocation(false);
   };
 
   const handleInput = (e) => {
-    setpincode(e.target.value);
-    if (e.target.value.length != 6) {
-      setvalidpincode(false);
-    } else if (e.target.value.length == 6) {
-      setvalidpincode(true);
+    setPincode(e.target.value);
+    if (e.target.value.length !== 6) {
+      setValidPincode(false);
+    } else {
+      setValidPincode(true);
     }
   };
 
-  const handlesubmit = () => {
-    setpincode("");
-    setlocation(false);
+  const handleSubmit = () => {
+    setPincode("");
+    setLocation(false);
     place = query.search(pincode);
   };
 
-  //get token from local storage
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      token = localStorage.getItem("token");
-
-      if (token) {
-        setchecklogin(true);
-      } else {
-        setchecklogin(false);
-      }
-    }
-  }, []);
+  const handleLogout = () => {
+    toast.success("Logged out");
+    localStorage.removeItem("token");
+    setUser(null);
+    window.location = "/";
+  };
 
   return (
     <header className="sticky top-0 z-50">
-      <div className="top bg-[#d6f8e7] px-2 md:px-20 py-5 flex items-center justify-between">
-        <button
-          onClick={locationclicked}
-          className="left_top space-x-2 bg-transparent flex justify-center items-center"
-        >
-          <CiLocationOn className="text-lg cursor-pointer" />
-          <span className="md:text-sm text-[.65rem]  cursor-pointer text-slate-900 capitalize font-sans hover:underline">
-            {place?.length > 0
-              ? place[0].village + ", " + place[0].state
-              : "Enter Your Location"}
-          </span>
-        </button>
-        <a
-          href="tel:9668171117"
-          className="right_top flex justify-center space-x-2 items-center"
-        >
-          <IoCallOutline className="text-lg cursor-pointer" />
-          <span className="md:text-sm text-[.7rem] cursor-pointer text-slate-900 hover:text-blue-800 hover:underline">
-            +91-9668171117
-          </span>
-        </a>
-      </div>
+      <Toaster />
+   
 
-      {location && (
-        <div>
-          <aside
-            id="logo-sidebar"
-            className="absolute top-0 left-0 z-40 w-96 h-screen pt-6 t bg-[#c0fadd] border-r border-gray-200   "
-            aria-label="Sidebar"
-          >
-            <div className="h-full px-3 pb-4 overflow-y-auto  ">
-              <h1 className="font-semibold font-sans pl-[21rem] text-2xl  text-gray-700">
-                <span>
-                  <AiOutlineCloseCircle
-                    onClick={locationclosed}
-                    className="hover:cursor-pointer"
-                  />
-                </span>
-              </h1>
-              <h1 className="text-center pt-4 font-semibold font-sans text-2xl text-gray-700">
-                Your Location
-              </h1>
-              <hr className="mb-10 mt-2 border-spacing-1 border-2 border-t border-black/20 rounded "></hr>
-              {/* <label
-                  htmlFor="helper-text"
-                  className="block mb-2 text-sm font-medium text-gray-900 "
-                >
-                  Your email
-                </label>
-                <input
-                  type="email"
-                  id="helper-text"
-                  aria-describedby="helper-text-explanation"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5  "
-                  placeholder="name@flowbite.com"
-                /> */}
-              <div className="px-6">
-                <h1 className="text-md pt-16 pb-1">Pin Code</h1>
+      
 
-                <input
-                  type="number"
-                  onChange={handleInput}
-                  value={pincode}
-                  className=" border-2 h-14 bg-transparent border-gray-900 text-md text-gray-900 text-sm rounded-lg block w-full p-4"
-                  placeholder="Enter your Pin Code "
-                />
-                {!validpincode && (
-                  <div className="text-[.7rem] -bottom-1 text-right mb-2 text-red-600">
-                    *Enter a valid pin code
-                  </div>
+      <nav className="relative bg-[#eff8f3] shadow-md pb-2.5 z-30">
+        <div className="mx-auto  px-2 sm:px-6 lg:px-8">
+          <div className="relative flex h-16 items-center justify-between">
+            <div
+              className="absolute inset-y-0 left-0 flex items-center sm:hidden"
+              onClick={() => {
+                setMobile(!mobile);
+              }}
+            >
+              <button
+                type="button"
+                className="relative inline-flex items-center justify-center rounded-md p-2 text-slate-400 hover:bg-transparent hover:text-slate-900 focus:outline-none"
+                aria-controls="mobile-menu"
+                aria-expanded="false"
+              >
+                <span className="absolute -inset-0.5" />
+                <span className="sr-only">Open main menu</span>
+
+                {!mobile ? (
+                  <CgMenuGridO className="text-xl text-slate-900" />
+                ) : (
+                  <CgClose className="text-xl text-slate-900" />
                 )}
-                <button
-                  className="mt-20 ml-[3rem] text-center font-sans text-md bg-teal-500 text-white rounded-full px-20 py-2"
-                  onClick={handlesubmit}
-                >
-                  Submit
-                </button>
-              </div>
+              </button>
             </div>
-          </aside>
+            <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+              <Link href={"/"} className="flex flex-shrink-0 items-center">
+                <h1 className="text-slate-700 font-semibold text-xl cursor-pointer">
+                  <span className="self-center relative text-2xl font-semibold whitespace-nowrap">
+                    <span className="text-teal-500">Saurah</span>.Finance
+                    <span className="text-base text-teal-500 absolute -bottom-4 right-0">
+                      retail
+                    </span>
+                  </span>
+                </h1>
+              </Link>
+            
+            </div>
+          {!loading && <div> {!user ? (
+              <Link
+                href={"/RetailerLogin"}
+                className="absolute top-6 bg-teal-500 text-white font-semibold md:text-lg rounded-full px-5 p-1 right-2 md:right-2"
+              >
+                Login
+              </Link>
+            ) : (
+              <button
+                onMouseOver={() => setAccountDropdown(true)}
+                onClick={()=> setAccountDropdown(!accountDropdown)}
+                className="absolute top-3 text-4xl text-teal-500 font-bold right-2 md:right-2"
+              >
+                <MdAccountCircle className="size-12"/>
+              </button>
+            )}
+
+            </div>}
+          </div>
+        </div>
+
+        {mobile && (
+          <div className="sm:hidden transition-all duration-500" id="mobile-menu" onMouseLeave={() => setMobile(false)}>
+            <div className="space-y-1 px-2 pb-3 pt-2">
+              <Link
+                href={"http://saurah.com/About"}
+                className="text-slate-700 hover:scale-95 hover:text-slate-500 block rounded-md px-3 py-2 text-base font-medium"
+              >
+                About Us
+              </Link>
+              <Link
+                href={"http://saurah.com/ContactUs"}
+                className="text-slate-700 hover:scale-95 hover:text-slate-500 block rounded-md px-3 py-2 text-base font-medium"
+              >
+                Contact Us
+              </Link>
+              <Link
+                href={"http://saurah.com/FeedBack"}
+                className="text-slate-700 hover:scale-95 hover:text-slate-500 block rounded-md px-3 py-2 text-base font-medium"
+              >
+                Feedback
+              </Link>
+            </div>
+          </div>
+        )}
+      </nav>
+      {user && accountDropdown && (
+        <div
+          className="absolute right-2 md:right-4 top-16 mt-2 z-50 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="user-menu-button"
+          onMouseLeave={() => setAccountDropdown(false)}
+        >
+          <div className="" role="none">
+            <Link
+              href={"/RetailerDashboard"}
+              className="text-slate-700 block px-4 py-2 text-sm hover:bg-neutral-300"
+              role="menuitem"
+            >
+              My Account
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="text-slate-700 block w-full text-left px-4 py-2 text-sm hover:bg-neutral-300"
+              role="menuitem"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       )}
-
-      <nav className="relative">
-        {!checklogin ? <LogoutNav /> : <Navcontroller login={token} />}
-      </nav>
     </header>
   );
 }

@@ -101,9 +101,7 @@ export function solarcalculatorfunction(ebill_actual, unitcharges_actual, basech
       ((parseFloat(max_total_cost) -
         parseFloat(subsidy) -
         parseFloat(downpayment)) /
-        (parseFloat(maxemi) - parseFloat(emiinterest))) /
-        12
-    ) * 12;
+        (parseFloat(maxemi) - parseFloat(emiinterest))));
   let emi = PMT(
     parseFloat(roi_actual) / 1200,
     tenure,
@@ -143,7 +141,8 @@ export function solarcalculatorfunction(ebill_actual, unitcharges_actual, basech
     yearly_savings:Math.ceil(yearlysavings).toString(),
     rooftop_area:Math.ceil(rooftoparea).toString(),
     emission_savings:Math.ceil(emissionsavings).toString(),
-    max_KW_reached:Math.ceil(maxKWreached).toString()
+    max_KW_reached:Math.ceil(maxKWreached).toString(),
+    ebill:ebill_actual,
   };
   return returnobj;
 }

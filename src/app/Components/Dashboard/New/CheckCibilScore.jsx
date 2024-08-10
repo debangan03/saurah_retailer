@@ -2,9 +2,51 @@
 import Image from "next/image";
 import React, { useState } from "react";
 import cibilimg from "../../../assets/cibilpic.png";
-import { IoCloseCircleOutline } from "react-icons/io5";
+import {toast,Toaster} from 'react-hot-toast'
+import { useFormik } from "formik";
+import { cibiluserSchema } from "./FormValidator";
 
 function CheckCibilScore() {
+  const initialValues = {
+    name: "",
+    email: "",
+    phone: "",
+    pan: "",
+  };
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
+    useFormik({
+      initialValues,
+      validationSchema: cibiluserSchema,
+      onSubmit: (values, action) => {
+        handlesubmit_for_civil(values);
+        action.resetForm();
+      },
+    });
+
+  const [isformsubmitted, setisformsubmitted] = useState(false);
+  const handlesubmit_for_civil = async (v) => {
+    let request = await fetch(`/api/addcibilusercheck`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: v.name,
+        email: v.email,
+        phone: v.phone,
+        pan: v.pan,
+      }),
+    });
+    const response = await request.json();
+    console.log(response);
+    if (response.success) {
+      setcibil(false);
+      setisformsubmitted(true);
+      toast.success("Request recieved")
+    } else {
+      toast.error("Error occured. Please try again.");
+    }
+  };
   const [cibil, setcibil] = useState();
   const [openpopup, setopenpopup] = useState(false);
 
@@ -38,29 +80,11 @@ function CheckCibilScore() {
   };
   return (
     <>
-      {/* pop up window to show cibil info */}
-      {/* {openpopup && (
-      <div className="pop_up_window absolute top-0 left-0 z-50 h-screen w-screen bg-black/20 backdrop-blur-md">
-        <div className="">
-          <div className="flex rounded-lg relative justify-center items-center bg-[#d7f5e6] h-fit md:w-[40%] w-[89%] mx-auto mt-48">
-            <span onClick={closepopup} className="absolute -top-5 -right-5">
-              <IoCloseCircleOutline className="text-2xl text-rose-500 hover:text-rose-600 cursor-pointer" />
-            </span>
-
-            <div className="py-10">
-              <p>Name : Debangan Bhattacharyya </p>
-              <p>Pan No : ABCDE3434K </p>
-
-            </div>
-          </div>
-        </div>
-      </div>
-    )} */}
-
       {/* page component */}
 
-      <div className="my-10">
-        <div className="flex bg-transparent  lg:my-4  lg:flex-row flex-col lg:justify-center   items-center md:px-20 ">
+      <div className="my-24">
+        <Toaster/>
+        <div className="flex bg-transparent lg:h-[500px] lg:my-4  lg:flex-row flex-col lg:justify-center  items-center  ">
           <Image
             alt="cibildetails"
             src={cibilimg}
@@ -69,45 +93,146 @@ function CheckCibilScore() {
           <div className="md:w-[50%] h-full md:space-y-2  flex justify-center flex-col ">
             {!cibil && (
               <>
-                <h1 className="xl:text-xl font-sans xl:pl-32 text-sm font-semibold text-slate-900  text-left">
-                  Check your
-                </h1>
-                <h1 className="xl:text-5xl font-sans xl:pl-32 text-3xl md:pb-4 pb-2 font-semibold text-slate-900  text-left">
-                  Cibil Score{" "}
-                  <span className="md:text-4xl  text-2xl">in one tap</span>
-                </h1>
+                {isformsubmitted && (
+                  <p className="text-center text-green-500 font-medium">
+                    <h2 className="xl:text-xl font-sans xl:pl-32 text-sm font-semibold text-slate-900  text-left">
+                      Your request to check Cibil score has been received.
+                    </h2>
+                    <p className="xl:text-3xl font-sans xl:pl-32 text-3xl md:pb-4 pb-2 font-semibold text-slate-900  text-left">
+                      We will reach out to you soon.
+                    </p>
+                  </p>
+                )}
+                {!isformsubmitted && (
+                  <>
+                    <h2 className="xl:text-xl font-sans xl:pl-32 text-sm font-semibold text-slate-900  text-left">
+                      Check your
+                    </h2>
+                    <p className="xl:text-5xl font-sans xl:pl-32 text-3xl md:pb-4 pb-2 font-semibold text-slate-900  text-left">
+                      Cibil Score{" "}
+                      <span className="md:text-4xl  text-2xl">in one tap</span>
+                    </p>
 
-                <button
-                  onClick={fetchcibil}
-                  className="bg-teal-500 xl:mx-32 p-2 mt text-lg font-semibold rounded-md text-white"
-                >
-                  Check Now
-                </button>
+                    <button
+                      onClick={fetchcibil}
+                      className="bg-teal-500 xl:mx-32 p-2 mt text-lg font-semibold rounded-md text-white"
+                    >
+                      Check Now
+                    </button>
+                  </>
+                )}
               </>
             )}
-            <div className="text-jutify 2xl:px-32 mt-20">
+            <div className="text-jutify relative 2xl:px-32 mt-20">
               {cibil && (
-                // <div>
-                //   <h1 className="xl:text-2xl pb-4 font-sans text-lg font-semibold text-slate-900  text-left">Name : Saurah</h1>
-                //   <h1 className="xl:text-2xl pb-4 font-sans text-lg font-semibold text-slate-900  text-left">Address : Bhubaneswar</h1>
-                //   <h1 className="xl:text-2xl pb-4 font-sans text-lg font-semibold text-slate-900  text-left">Date of Birth : 01-01-2024</h1>
-                //   <h1 className="xl:text-2xl pb-4 font-sans text-lg font-semibold text-slate-900  text-left">Cibil : 897</h1>
-                // </div>
-                <div className="w-[90vw] lg:mt-0 -mt-20 md:w-[500px]  mx-4 md:px-0 bg-white shadow-md overflow-hidden rounded-md">
+                <div className="w-[90vw] lg:mt-0 -mt-20 md:w-[500px] mx-4 pb-6 md:px-0 bg-[#c0fada] shadow-md overflow-hidden rounded-md">
                   <div className="p-4">
-                    <h2 className="md:text-2xl text-xl text-center font-sans font-semibold mb-2">Saurah Cibil Checker</h2>
-                    <p className="text-center ">Coming Soon</p>
-                    {/* <div className="mb-4">
-                      <p className="text-gray-600">Bhubaneswar</p>
-                    </div>
-                    <div className="mb-4">
-                      <p className="text-gray-600">Date of Birth: </p>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-lg font-semibold text-green-500">
-                        Credit Score:{" "}
-                      </span>
-                    </div> */}
+                    <h2 className="md:text-2xl text-xl text-center font-sans font-semibold mb-2">
+                      Saurah Cibil Checker
+                    </h2>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                      <div>
+                        <label
+                          className="block text-sm font-medium text-gray-700"
+                          htmlFor="name"
+                        >
+                          Name
+                        </label>
+                        <input
+                          name="name"
+                          id="name"
+                          type="text"
+                          placeholder="Enter Your Name..."
+                          value={values.name}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                        />
+                        {errors.name && touched.name ? (
+                          <p className="form-error p-[2px] absolute text-[0.65rem] text-rose-500">
+                            {errors.name}
+                          </p>
+                        ) : null}
+                      </div>
+                      <div>
+                        <label
+                          className="block text-sm font-medium text-gray-700"
+                          htmlFor="email"
+                        >
+                          Email ID
+                        </label>
+                        <input
+                          name="email"
+                          id="email"
+                          type="email"
+                          placeholder="Enter Email Address..."
+                          value={values.email}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                        />
+                        {errors.email && touched.email ? (
+                          <p className="form-error p-[2px] absolute text-[0.65rem] text-rose-500">
+                            {errors.email}
+                          </p>
+                        ) : null}
+                      </div>
+                      <div>
+                        <label
+                          className="block text-sm font-medium text-gray-700"
+                          htmlFor="phone"
+                        >
+                          Phone Number
+                        </label>
+                        <input
+                          name="phone"
+                          id="phone"
+                          type="text"
+                          placeholder="Enter Your phone Number..."
+                          value={values.phone}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                        />
+                        {errors.phone && touched.phone ? (
+                          <p className="form-error p-[2px] absolute text-[0.65rem] text-rose-500">
+                            {errors.phone}
+                          </p>
+                        ) : null}
+                      </div>
+                      <div>
+                        <label
+                          className="block text-sm font-medium text-gray-700"
+                          htmlFor="pan"
+                        >
+                          PAN Number
+                        </label>
+                        <input
+                          name="pan"
+                          type="text"
+                          id="pan"
+                          placeholder="Enter Your Pan Number..."
+                          value={values.pan}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm  sm:text-sm"
+                        />
+                        {errors.pan && touched.pan ? (
+                          <p className="form-error p-[2px] text-[0.65rem] absolute text-rose-500">
+                            {errors.pan}
+                          </p>
+                        ) : null}
+                      </div>
+                      <div className="text-center">
+                        <button
+                          disabled={Object.keys(errors).length > 0}
+                          type="submit"
+                          className="mt-4 px-4 py-2 disabled:cursor-not-allowed bg-[#14b8a6] text-white text-md font-medium rounded-md shadow-sm hover:scale-95 "
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </form>
                   </div>
                 </div>
               )}
