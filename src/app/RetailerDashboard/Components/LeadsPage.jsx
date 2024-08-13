@@ -212,6 +212,7 @@ const LeadsPage = () => {
                       >
                         Reject
                       </button>
+                      {/* onclick */}
                        <span className="flex items-center ml-10  rounded-full text-3xl" onClick={() => handleRowExpand(lead.id)}>{expandedRow === lead.id ? <IoArrowUpCircleOutline/>:<IoArrowDownCircleOutline />}</span>
                     </td>
                   </tr>
