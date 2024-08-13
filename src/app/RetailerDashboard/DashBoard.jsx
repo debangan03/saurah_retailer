@@ -89,29 +89,20 @@ function DashBoard() {
   return (
     <div>
       <div className="lg:flex hidden items-center justify-start h-full w-screen">
-        <div className="sidebar w-[18%] back h-[100vh] overflow-y-auto px-4 pt-10 bg-neutral-800/80 text-white relative">
-          <img
+        <div className="sidebar w-[18%] back h-[100vh] overflow-y-auto px-4 pt-10 bg-teal-900/90 text-white relative">
+          {/* <img
             src="https://cdn.britannica.com/94/192794-050-3F3F3DDD/panels-electricity-order-sunlight.jpg"
             alt="bg"
             className="absolute top-0 bottom-0 left-0 right-0 -z-20 h-full w-full object-cover object-center"
-          />
+          /> */}
           <div>
-            <h3 className="text-2xl font-semibold text-neutral-200 text-center">
-              Dashboard
+            <h3 className="text-3xl font-semibold text-neutral-200 text-center">
+              SaurahFinance
             </h3>
             <hr className="mb-4 border border-neutral-500" />
           </div>
           <ul className="space-y-6 px-4 min-h-[80vh] font-thin">
-            <li
-              onClick={() => handleContentChange("profile")}
-              className={`flex justify-start text-neutral-200 font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
-                activeContent === "profile"
-                  ? "bg-teal-600"
-                  : "hover:bg-teal-700"
-              }`}
-            >
-              <SlUser /> <span>Profile</span>
-            </li>
+            
 
             <li
               onClick={() => handleContentChange("leads")}
@@ -159,7 +150,17 @@ function DashBoard() {
                   : "hover:bg-teal-700"
               }`}
             >
-              <IoAnalytics /> <span>Analytics</span>
+              <IoAnalytics /> <span>Information Centre</span>
+            </li>
+            <li
+              onClick={() => handleContentChange("profile")}
+              className={`flex justify-start text-neutral-200 font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
+                activeContent === "profile"
+                  ? "bg-teal-600"
+                  : "hover:bg-teal-700"
+              }`}
+            >
+              <SlUser /> <span>Profile</span>
             </li>
             <li
               onClick={() => handleContentChange("others")}
