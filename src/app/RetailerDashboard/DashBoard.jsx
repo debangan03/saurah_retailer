@@ -24,6 +24,8 @@ import { MdContactSupport, MdOutlineContactSupport } from "react-icons/md";
 import CheckEligibility from "./Components/CheckEligibility";
 import ComingSoon from "./Components/ComingSoon";
 import LeadsPage from "./Components/LeadsPage";
+import TermsAndConditions from "./Components/TermsAndConditions";
+import PrivacyPolicy from "./Components/PrivacyPolicy";
 
 //end of import
 
@@ -32,13 +34,20 @@ function DashBoard() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const [activeContent, setActiveContent] = useState("profile");
+  const [isOthersExpanded, setIsOthersExpanded] = useState(false);
+
 
   const tooglesidebar = () => {
     ref.current.classList.toggle("hidden");
   };
 
   const handleContentChange = (content) => {
-    setActiveContent(content);
+    if (content === "others") {
+      setIsOthersExpanded(!isOthersExpanded);
+    } else {
+      setIsOthersExpanded(false);
+      setActiveContent(content);
+    }
   };
 
   if (loading) {
@@ -77,6 +86,10 @@ function DashBoard() {
         return <ComingSoon/>;
       case "others":
         return <div><ComingSoon/></div>;
+        case "terms":
+          return <div><TermsAndConditions/></div>; // Replace with actual component
+        case "privacy":
+          return <div><PrivacyPolicy/></div>; // Replace with actual component
       default:
         return (
           <div>
@@ -88,8 +101,8 @@ function DashBoard() {
 
   return (
     <div>
-      <div className="lg:flex hidden items-center justify-start h-full w-screen">
-        <div className="sidebar w-[18%] back h-[100vh] overflow-y-auto px-4 pt-10 bg-teal-900/90 text-white relative">
+      <div className="lg:flex hidden items-center justify-start h-full w-screen ">
+        <div className="sidebar w-[18%] back h-[100vh] overflow-y-hidden  px-4 pt-10 bg-teal-900/90 text-white relative">
           {/* <img
             src="https://cdn.britannica.com/94/192794-050-3F3F3DDD/panels-electricity-order-sunlight.jpg"
             alt="bg"
@@ -162,14 +175,44 @@ function DashBoard() {
             >
               <SlUser /> <span>Profile</span>
             </li>
-            <li
+            {/* <li
               onClick={() => handleContentChange("others")}
               className={`flex justify-start text-neutral-200 font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
                 activeContent === "others" ? "bg-teal-600" : "hover:bg-teal-700"
               }`}
             >
               <CgMore /> <span>Others</span>
-            </li>
+            </li> */}
+            <li>
+  <div
+    onClick={() => handleContentChange("others")}
+    className={`flex justify-start text-neutral-200 font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
+      activeContent === "others" ? "bg-teal-600" : "hover:bg-teal-700"
+    }`}
+  >
+    <CgMore /> <span>Others</span>
+  </div>
+  {isOthersExpanded && (
+    <ul className="ml-6 mt-2 space-y-4">
+      <li
+        onClick={() => setActiveContent("terms")}
+        className={`flex justify-start text-neutral-200 text-sm font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
+          activeContent === "terms" ? "bg-teal-600" : "hover:bg-teal-700"
+        }`}
+      >
+        <span>Terms & Conditions</span>
+      </li>
+      <li
+        onClick={() => setActiveContent("privacy")}
+        className={`flex justify-start text-neutral-200 text-sm font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
+          activeContent === "privacy" ? "bg-teal-600" : "hover:bg-teal-700"
+        }`}
+      >
+        <span>Privacy Policy</span>
+      </li>
+    </ul>
+  )}
+</li>
             <li
               onClick={() => {
                 if (confirm("are You sure want to Logout ?")) {
