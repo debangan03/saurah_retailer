@@ -71,17 +71,17 @@ function Profile() {
 
   return (
     <div>
-      <div className="relative h-[300px] w-full">
-        <Image
+      <div className="relative h-[300px]  w-full">
+        {/* <Image
           src={banner}
           alt="Banner"
           layout="fill"
           objectFit="cover"
           quality={100}
           priority
-        />
-        <div className="bg-black/60 z-20 flex  justify-center items-center absolute top-0 left-0 h-full w-full">
-          <h3 className="text-3xl text-white tracking-widest">
+        /> */}
+        <div className="bg-transparent z-20  flex  justify-center items-center absolute top-0 left-0 h-full w-full">
+          <h3 className="text-3xl text-black tracking-widest">
             <span ref={el}></span>
           </h3>
         </div>

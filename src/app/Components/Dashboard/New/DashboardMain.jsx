@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import retailicon from "../../../assets/retailicon.png";
 import Link from "next/link";
 import { useAuth } from "@/app/Context/AuthContext";
-import rightimage from "../../../assets/right.png";
+import rightimage from "../../../assets/partner.png";
 import { BsStars } from "react-icons/bs";
 
 import {
@@ -31,14 +31,14 @@ const Milestone = ({ step, title, description }) => (
 );
 
 const DashboardMain = () => {
-  const [loggedin, setloggedin] = useState(false)
+  const [loggedin, setloggedin] = useState(false);
   const { user } = useAuth();
   console.log(user);
   useEffect(() => {
-    if(user) {
+    if (user) {
       setloggedin(true);
     }
-  },[user]);
+  }, [user]);
 
   return (
     <>
@@ -58,7 +58,7 @@ const DashboardMain = () => {
           </svg>
         </div>
         {/* Top Nav */}
-        <div className="relative z-20 flex flex-col md:flex-row justify-between px-4 md:px-10 items-center py-6">
+        <div className="relative z-20 flex flex-col md:flex-row justify-between px-4 md:px-10 items-center md:py-0 py-6">
           <div className="text-center md:text-left md:w-1/2">
             <p className="text-lg md:text-xl font-semibold mb-4">
               Are your customers looking for loans to install rooftop solar at
@@ -79,27 +79,31 @@ const DashboardMain = () => {
                 Loan for Customer
               </Link>
 
-              {!loggedin ?<Link
-                className="bg-teal-600 text-zinc-50   px-8 p-3 font-semibold underline-offset-2 rounded-full hover:underline"
-                href={"/RetailerLogin"}
-              >
-                Login
-              </Link>:<Link
-                className="bg-teal-600 text-zinc-50 px-8 p-3 font-semibold underline-offset-2 rounded-full hover:underline"
-                href={"/RetailerDashboard"}
-              >
-              Go to Dashboard
-              </Link>}
+              {!loggedin ? (
+                <Link
+                  className="bg-teal-600 text-zinc-50   px-8 p-3 font-semibold underline-offset-2 rounded-full hover:underline"
+                  href={"/RetailerLogin"}
+                >
+                  Login
+                </Link>
+              ) : (
+                <Link
+                  className="bg-teal-600 text-zinc-50 px-8 p-3 font-semibold underline-offset-2 rounded-full hover:underline"
+                  href={"/RetailerDashboard"}
+                >
+                  Go to Dashboard
+                </Link>
+              )}
             </div>
           </div>
-          <div className="mt-6 md:mt-0 md:w-1/3 w-full">
+          <div className="mt-6 md:mt-0 md:w-2/5 w-full">
             <Image
               src={rightimage}
               alt="Solar Panel"
               layout="responsive"
-              width={300} // Adjust the width and height as needed
-              height={300}
-              className="object-cover"
+              width={500} // Adjust the width and height as needed
+              height={500}
+              className="object-cover mix-blend-multiply"
             />
           </div>
         </div>
@@ -118,62 +122,62 @@ const DashboardMain = () => {
           </p>
           <div className="flex justify-start">
             <div className="lg:h-64 h-[712px] w-1 bg-gradient-to-b from-emerald-600 to-amber-100" />
-            <div className="text-left pl-4">
-              <div className="text-gray-700">
+            <ul className="text-left pl-4 list-disc list-inside">
+              <li className="text-gray-700">
                 As a retailer of rooftop solar, you're likely accustomed to
                 consumer inquiries about financing options, especially given the
                 initial investment required for solar installation.
                 <br />
                 <br />
-              </div>
-              <div className="text-gray-700">
+              </li>
+              <li className="text-gray-700">
                 Addressing these questions can be challenging, but with Saurah,
                 you can simplify the process.
                 <br />
                 <br />
-              </div>
-              <div className="text-gray-700">
+              </li>
+              <li className="text-gray-700">
                 Saurah is your go-to platform for seamless loan disbursal.
                 Forget the hassle of contacting banks, submitting extensive
                 documents, and keeping clients waiting.
                 <br />
                 <br />
-              </div>
-              <div className="text-gray-700">
+              </li>
+              <li className="text-gray-700">
                 With Saurah, you can quickly verify yourself, onboard customers,
                 and provide tailored financial solutions for their rooftop solar
                 projects—all in one place.
                 <br />
                 <br />
-              </div>
-              <div className="text-gray-700">
+              </li>
+              <li className="text-gray-700">
                 This means you can provide your customers with customized
                 financing options quickly and efficiently, enhancing both their
                 experience and your operational efficiency.
                 <br />
                 <br />
-              </div>
-              <div className="text-gray-700">
+              </li>
+              <li className="text-gray-700">
                 Experience a hassle-free way to manage renewable energy
                 financing and keep your business running smoothly with Saurah.
                 <br />
                 <br />
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
         </div>
       </section>
 
       <div className="bg-gradient-to-br to-teal-400 via-teal-700 from-teal-600 w-fit mx-auto p-4 flex flex-col justify-center items-center space-y-2 rounded">
-        <div className="flex justify-center space-x-10">
+        <div className="flex justify-center space-x-4">
           <BsStars className="text-3xl text-white" />
-          <span className="text-white font-bold underline">
+          <span className="text-white font-bold underline text-2xl">
             Loan for customer, all the money for you.
           </span>
           <BsStars className="text-3xl text-white" />
         </div>
         <Link
-          className="bg-white rounded-full font-sans text-sm font-semibold hover:scale-x-105 duration-500 px-4 py-1"
+          className="bg-white rounded-full font-sans text-sm font-semibold hover:scale-x-105 duration-500 px-4 py-2"
           href={"/"}
         >
           Know More
