@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../Context/AuthContext";
 import Loaderpage from "../LoadingComponent/Loaderpage";
 import { toast, Toaster } from "react-hot-toast";
@@ -33,9 +33,26 @@ function DashBoard() {
   const ref = useRef();
   const router = useRouter();
   const { user, loading } = useAuth();
+  const [leads, setleads] = useState([])
   const [activeContent, setActiveContent] = useState("profile");
   const [isOthersExpanded, setIsOthersExpanded] = useState(false);
+  const fetchleads = async (id) => {
+    const response = await fetch("/api/getalleads", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ retailerId: id }),
+    });
+    const data = await response.json();
+    setleads(data);
 
+  };
+  useEffect(() => {
+    if (user) {
+      fetchleads(user?.id);
+    }
+  }, [user]);
 
   const tooglesidebar = () => {
     ref.current.classList.toggle("hidden");
@@ -61,19 +78,29 @@ function DashBoard() {
     }, 2000);
     return <Loaderpage />;
   }
-
+  const conagec=(c)=>{
+    setActiveContent(c);
+  }
   const renderContent = () => {
     switch (activeContent) {
       case "profile":
         return (
           <div>
-            <Profile />
+            <Profile changecompo={conagec} leads={leads}/>
           </div>
         );
       case "leads":
-        return <div><LeadsPage/></div>;
+        return (
+          <div>
+            <LeadsPage leads={leads} />
+          </div>
+        );
       case "eligibility":
-        return <div><CheckEligibility/></div>;
+        return (
+          <div>
+            <CheckEligibility />
+          </div>
+        );
       case "calculator":
         return (
           <div>
@@ -81,15 +108,31 @@ function DashBoard() {
           </div>
         );
       case "subsity":
-        return <div><ComingSoon/></div>;
+        return (
+          <div>
+            <ComingSoon />
+          </div>
+        );
       case "analytics":
-        return <ComingSoon/>;
+        return <ComingSoon />;
       case "others":
-        return <div><ComingSoon/></div>;
-        case "terms":
-          return <div><TermsAndConditions/></div>; // Replace with actual component
-        case "privacy":
-          return <div><PrivacyPolicy/></div>; // Replace with actual component
+        return (
+          <div>
+            <ComingSoon />
+          </div>
+        );
+      case "terms":
+        return (
+          <div>
+            <TermsAndConditions />
+          </div>
+        ); // Replace with actual component
+      case "privacy":
+        return (
+          <div>
+            <PrivacyPolicy />
+          </div>
+        ); // Replace with actual component
       default:
         return (
           <div>
@@ -115,8 +158,6 @@ function DashBoard() {
             <hr className="mb-4 border border-neutral-500" />
           </div>
           <ul className="space-y-6 px-4 min-h-[80vh] font-thin">
-            
-
             <li
               onClick={() => handleContentChange("leads")}
               className={`flex justify-start text-neutral-200 font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
@@ -184,35 +225,41 @@ function DashBoard() {
               <CgMore /> <span>Others</span>
             </li> */}
             <li>
-  <div
-    onClick={() => handleContentChange("others")}
-    className={`flex justify-start text-neutral-200 font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
-      activeContent === "others" ? "bg-teal-600" : "hover:bg-teal-700"
-    }`}
-  >
-    <CgMore /> <span>Others</span>
-  </div>
-  {isOthersExpanded && (
-    <ul className="ml-6 mt-2 space-y-4">
-      <li
-        onClick={() => setActiveContent("terms")}
-        className={`flex justify-start text-neutral-200 text-sm font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
-          activeContent === "terms" ? "bg-teal-600" : "hover:bg-teal-700"
-        }`}
-      >
-        <span>Terms & Conditions</span>
-      </li>
-      <li
-        onClick={() => setActiveContent("privacy")}
-        className={`flex justify-start text-neutral-200 text-sm font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
-          activeContent === "privacy" ? "bg-teal-600" : "hover:bg-teal-700"
-        }`}
-      >
-        <span>Privacy Policy</span>
-      </li>
-    </ul>
-  )}
-</li>
+              <div
+                onClick={() => handleContentChange("others")}
+                className={`flex justify-start text-neutral-200 font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
+                  activeContent === "others"
+                    ? "bg-teal-600"
+                    : "hover:bg-teal-700"
+                }`}
+              >
+                <CgMore /> <span>Others</span>
+              </div>
+              {isOthersExpanded && (
+                <ul className="ml-6 mt-2 space-y-4">
+                  <li
+                    onClick={() => setActiveContent("terms")}
+                    className={`flex justify-start text-neutral-200 text-sm font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
+                      activeContent === "terms"
+                        ? "bg-teal-600"
+                        : "hover:bg-teal-700"
+                    }`}
+                  >
+                    <span>Terms & Conditions</span>
+                  </li>
+                  <li
+                    onClick={() => setActiveContent("privacy")}
+                    className={`flex justify-start text-neutral-200 text-sm font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize ${
+                      activeContent === "privacy"
+                        ? "bg-teal-600"
+                        : "hover:bg-teal-700"
+                    }`}
+                  >
+                    <span>Privacy Policy</span>
+                  </li>
+                </ul>
+              )}
+            </li>
             <li
               onClick={() => {
                 if (confirm("are You sure want to Logout ?")) {
@@ -222,7 +269,7 @@ function DashBoard() {
               }}
               className={`flex justify-start text-neutral-200 font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize `}
             >
-              <IoIosLogOut  /> <span>Logout</span>
+              <IoIosLogOut /> <span>Logout</span>
             </li>
           </ul>
           <div className="flex justify-center items-center space-x-6">
@@ -231,11 +278,11 @@ function DashBoard() {
               className="size-6 hover:text-teal-400 cursor-pointer"
             />
             <MdContactSupport
-              onClick={() => router.push("/")}
+              onClick={() => router.push("https://www.saurah.com/ContactUs")}
               className="size-6 hover:text-teal-400 cursor-pointer"
             />
             <FaCircleInfo
-              onClick={() => router.push("/")}
+              onClick={() => router.push("https://www.saurah.com")}
               className="size-5 hover:text-teal-400 cursor-pointer"
             />
           </div>
@@ -343,7 +390,7 @@ function DashBoard() {
               }}
               className={`flex justify-start text-neutral-200 font-[300] cursor-pointer rounded p-2 px-6 items-center space-x-2 hover:scale-105 duration-500 capitalize `}
             >
-              <IoIosLogOut  /> <span>Logout</span>
+              <IoIosLogOut /> <span>Logout</span>
             </li>
           </ul>
           <div className="flex justify-center items-center space-x-6">
@@ -352,11 +399,11 @@ function DashBoard() {
               className="size-6 hover:text-teal-400 cursor-pointer"
             />
             <MdContactSupport
-              onClick={() => router.push("/")}
+              onClick={() => router.push("https://www.saurah.com/ContactUs")}
               className="size-6 hover:text-teal-400 cursor-pointer"
             />
             <FaCircleInfo
-              onClick={() => router.push("/")}
+              onClick={() => router.push("https://www.saurah.com/")}
               className="size-5 hover:text-teal-400 cursor-pointer"
             />
           </div>

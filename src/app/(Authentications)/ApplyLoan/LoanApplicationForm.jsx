@@ -6,19 +6,16 @@ import toast, { Toaster } from "react-hot-toast";
 
 const LoanApplicationForm = () => {
   const router = useRouter();
+  const { user } = useAuth();
+
   useEffect(() => {
-    if(!localStorage.getItem('token')){
+    if (!localStorage.getItem('token')) {
       toast.error('Please login to access this page');
       setTimeout(() => {
-        
-        router.push('/')
+        router.push('/');
       }, 1000);
     }
-  }, [])
-  
-
-  const { user } = useAuth();
-  if (!user){ return <>Loading...</>;}
+  }, [router]);
 
   const sampleData = {
     "123456": { lastBill: "$120.50", loanAmount: "1000" },
@@ -34,21 +31,24 @@ const LoanApplicationForm = () => {
     panNo: "",
     address: "",
     electricityAccountNo: "",
-    electricityBill: "", // Example readonly field
-    amountForLoan: "", // Example readonly field
+    electricityBill: "",
+    amountForLoan: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [billFound, setBillFound] = useState(false);
 
   useEffect(() => {
     const { electricityAccountNo } = formData;
     if (electricityAccountNo && sampleData[electricityAccountNo]) {
+      setBillFound(true);
       setFormData((prevFormData) => ({
         ...prevFormData,
         electricityBill: `Last Bill: ${sampleData[electricityAccountNo].lastBill}`,
         amountForLoan: sampleData[electricityAccountNo].loanAmount,
       }));
     } else {
+      setBillFound(false);
       setFormData((prevFormData) => ({
         ...prevFormData,
         electricityBill: "",
@@ -72,6 +72,8 @@ const LoanApplicationForm = () => {
     try {
       // Simulate API call delay (remove this in actual implementation)
       await new Promise((resolve) => setTimeout(resolve, 2000));
+      console.log(formData);
+      
 
       // Replace with actual API call
       const response = await fetch("/api/applyloanforcustomer", {
@@ -79,7 +81,7 @@ const LoanApplicationForm = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({...formData,retailerId:user?.id}),
       });
 
       if (!response.ok) {
@@ -88,7 +90,7 @@ const LoanApplicationForm = () => {
 
       toast.success("Loan application submitted successfully");
       setTimeout(() => {
-        router.push('/')
+        router.push('/RetailerDashboard');
       }, 1000);
     } catch (error) {
       console.error("Error submitting loan application:", error);
@@ -97,6 +99,8 @@ const LoanApplicationForm = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (!user?.id) return <>Loading...</>;
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -109,7 +113,7 @@ const LoanApplicationForm = () => {
               type="text"
               id="retailerId"
               name="retailerId"
-              value={formData.retailerId}
+              value={formData.retailerId??user?.id}
               onChange={handleChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               required
@@ -189,13 +193,25 @@ const LoanApplicationForm = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700">Electricity Bill</label>
-            <div className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
-              {formData.electricityBill}
-            </div>
+            <label htmlFor="electricityBill" className="block text-gray-700">Electricity Bill</label>
+            {billFound ? (
+              <div className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
+                {formData.electricityBill}
+              </div>
+            ) : (
+              <input
+                type="text"
+                id="electricityBill"
+                name="electricityBill"
+                value={formData.electricityBill}
+                onChange={handleChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                required={!billFound} // Make required only when not found
+              />
+            )}
           </div>
           <div>
-            <label className="block text-gray-700">Amount for Loan</label>
+            <label htmlFor="amountForLoan" className="block text-gray-700">Amount for Loan</label>
             <input
               type="number"
               id="amountForLoan"

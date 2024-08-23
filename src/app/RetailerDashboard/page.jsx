@@ -1,12 +1,13 @@
-import React from 'react'
-import DashBoard from './DashBoard'
+import React from "react";
+import DashBoard from "./DashBoard";
 
 function page() {
 
   return (
-    <div className='h-screen'>
-        <DashBoard/></div>
-  )
+    <div className="h-screen">
+      <DashBoard />
+    </div>
+  );
 }
 
-export default page
+export default page;

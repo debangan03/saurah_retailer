@@ -59,21 +59,21 @@ const DashboardMain = () => {
         </div>
         {/* Top Nav */}
         <div className="relative z-20 flex flex-col md:flex-row justify-between px-4 md:px-10 items-center md:py-0 py-6">
-          <div className="text-center md:text-left md:w-1/2">
-            <p className="text-lg md:text-xl font-semibold mb-4">
+          <div className="text-center md:text-left md:w-1/3">
+            <p className="text-lg md:text-xl text-black font-semibold mb-4">
               Are your customers looking for loans to install rooftop solar at
               home?
             </p>
-            <p className="text-base md:text-lg">
+            <p className="text-base md:text-lg text-gray-800">
               We, at SAURAH, provide instant approved loans for your customers,
               at your doorstep.
             </p>
-            <div className="flex justify-start space-x-4 mt-4 items-center relative">
-              <p className="absolute top-14 left-5 font-bold text-red-500">
+            <div className="flex justify-start  mt-4 items-center relative">
+              <a href="/Terms" target="_blank" className="absolute hover:underline top-14 left-5 font-bold text-gray-800">
                 *Tnc
-              </p>
+              </a>
               <Link
-                className="bg-teal-100 font-semibold hover:underline text-zinc-500 p-3 px-6 rounded-full"
+                className="bg-teal-100 font-semibold mr-4 hover:underline text-zinc-500 p-3 px-6 rounded-full"
                 href={"/RetailerDashboard"}
               >
                 Loan for Customer

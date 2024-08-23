@@ -8,29 +8,34 @@ import { FaEye } from "react-icons/fa";
 import { MdAdd } from "react-icons/md";
 import { useAuth } from "@/app/Context/AuthContext";
 import { MdOutlineCancel } from "react-icons/md";
+import Link from "next/link";
 
-const LoanCard = () => {
+const LoanCard = ({ item,changecompo }) => {
+
   return (
-    <div className="bg-white h-36 w-full relative shadow-md rounded-md border-2">
+    <div>
+   {item && <div className="bg-white h-36 w-full relative shadow-md rounded-md border-2">
       <p className="absolute bottom-2 left-2 text-[0.6rem] bg-teal-900 text-white p-1 rounded-lg">
-        10-10-2024
+        {new Date(item?.createdAt).toLocaleString()}
       </p>
       <div className="p-2 font-semibold flex justify-between items-center">
         <div>
-          <p>Name: Debangan Bhattacharyya</p>
-          <p>Amount: 100000</p>
-          <p>Tenure: 8 months</p>
+          <p>Name: {item?.customerName}</p>
+          <p>Amount: {item?.amountForLoan}</p>
+          <p>Phone: {item?.phone}</p>
         </div>
-        <FaEye className="size-6 text-orange-400 mr-10" />
+        <FaEye onClick={()=>changecompo('leads')} className="size-6 text-orange-400 mr-10" />
       </div>
-    </div>
+    </div>}</div>
   );
 };
 
-function Profile() {
+function Profile({ leads,changecompo }) {
+  //console.log(leads);
+  
   const el = useRef(null);
-  const {user}=useAuth();
-  console.log(user)
+  const { user } = useAuth();
+  //console.log(user);
   const [isEditing, setIsEditing] = useState(false);
   const [userInfo, setUserInfo] = useState({
     name: "User Name",
@@ -71,7 +76,7 @@ function Profile() {
 
   return (
     <div>
-      <div className="relative h-[300px]  w-full">
+      <div className="relative h-[200px] bg-teal-400/30 m-4 rounded-lg  w-full">
         {/* <Image
           src={banner}
           alt="Banner"
@@ -92,7 +97,7 @@ function Profile() {
             className="absolute top-3 right-3 cursor-pointer text-gray-600 hover:text-gray-800"
             onClick={toggleEditing}
           >
-            {!isEditing ?<FaEdit size={20} />:<MdOutlineCancel size={24} />}
+            {!isEditing ? <FaEdit size={20} /> : <MdOutlineCancel size={24} />}
           </div>
           <div className="flex flex-col items-start ">
             {isEditing ? (
@@ -125,9 +130,9 @@ function Profile() {
                   onChange={handleInputChange}
                   className="w-full border border-gray-300 rounded px-3 py-2"
                 />
-                <button
-                  className="w-full mt-4 bg-teal-500 text-white py-2 px-4 rounded-md hover:bg-teal-600"
-                  >Save</button>
+                <button className="w-full mt-4 bg-teal-500 text-white py-2 px-4 rounded-md hover:bg-teal-600">
+                  Save
+                </button>
               </div>
             ) : (
               <div className="space-y-4">
@@ -144,15 +149,22 @@ function Profile() {
         <div className="h-[300px] bg-gray-400 mt-4 w-[1px] hidden lg:block"></div>
         <div className="profile lg:w-[45%] lg:bg-neutral-100 bg-white  lg:shadow-none shadow-md rounded p-6 relative ">
           <div className="absolute top-3 right-3 cursor-pointer text-gray-600 hover:text-gray-800">
-            <span className="flex justify-center items-center shadow-lg rounded-full p-1 border">
+            <Link
+              target="_blank"
+              href="/ApplyLoan"
+              className="flex justify-center items-center shadow-lg rounded-full p-1 border"
+            >
               Add <MdAdd size={20} className="size-6" />
-            </span>
+            </Link>
           </div>
           <div className="flex flex-col items-start min-h-[200px] space-y-4">
             <h2 className="text-2xl underline underline-offset-2 font-semibold text-gray-800">
               Loan History
             </h2>
-            <LoanCard />
+            <div className="max-h-[350px] w-full space-y-2 overflow-y-auto">
+            {leads?.map((item) => (
+              <LoanCard key={item._id} item={item} changecompo={changecompo}/>
+            ))}</div>
           </div>
         </div>
       </div>

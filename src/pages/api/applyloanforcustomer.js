@@ -6,6 +6,8 @@ const handler = async (req, res) => {
   if (req.method === "POST") {
     try {
        // Connect to MongoDB database
+       console.log(req.body);
+       
 
       const {
         retailerId,

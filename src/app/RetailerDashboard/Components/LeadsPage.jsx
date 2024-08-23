@@ -1,68 +1,50 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import {
   FaSearch,
   FaFilter,
-  FaCheck,
-  FaTimes,
 } from "react-icons/fa";
-import { AiOutlineMail, AiOutlinePhone } from "react-icons/ai";
-import Image from "next/image";
-import dummyProfilePic from "../../assets/myaccount.png";
-import { IoArrowDownCircleOutline,IoArrowUpCircleOutline  } from "react-icons/io5";
+import { IoArrowDownCircleOutline, IoArrowUpCircleOutline } from "react-icons/io5";
 
-const LeadsPage = () => {
-  const fetchedLeads = [
-    {
-      id: 1,
-      name: "John Doe",
-      maskedPan: "XXXX-XXXX-XXXX-1234",
-      askedAmount: "$10,000",
-      applicationDate: "2023-07-01",
-      status: "new",
-      kwApplied: "5 KW",
-      avgElectricityBill: "$100",
-      address: "123 Main St, City, Country",
-      rejectionReason: "",
-      loanTenure: "5 years",
-      installationProposal: "/proposal-link-1",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      maskedPan: "XXXX-XXXX-XXXX-5678",
-      askedAmount: "$5,000",
-      applicationDate: "2023-07-15",
-      status: "contacted",
-      kwApplied: "3 KW",
-      avgElectricityBill: "$60",
-      address: "456 Another St, City, Country",
-      rejectionReason: "",
-      loanTenure: "3 years",
-      installationProposal: "/proposal-link-2",
-    },
-  ];
-  const [leads, setLeads] = useState([]);
+const LeadsPage = ({ leads }) => {
+  const fetchedLeads = leads.map((lead) => ({
+    id: lead._id,
+    name: lead.customerName,
+    maskedPan: "XXXX-XXXX-XXXX-" + lead.panNo.slice(-4), // Masking the PAN number
+    askedAmount: `₹${lead.amountForLoan.toLocaleString()}`, // Formatting the amount
+    applicationDate: new Date(lead.createdAt).toLocaleDateString(), // Formatting the date
+    status: "new", // Assuming all leads start with a "new" status
+    kwApplied: "10", // Assuming this information is not provided
+    avgElectricityBill: lead.electricityBill,
+    address: lead.address,
+    rejectionReason: "N/A",
+    loanTenure: "N/A", // Assuming this information is not provided
+    installationProposal: "#", // Placeholder for the proposal link
+  }));
+
+  const [leadsState, setLeads] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedRow, setExpandedRow] = useState(null);
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("");
   const [filterValue, setFilterValue] = useState("");
   const [minfilterValue, setminfilterValue] = useState("");
-  const [maxfilterValue, setmaxfilterValue] = useState("")
+  const [maxfilterValue, setmaxfilterValue] = useState("");
+
   useEffect(() => {
     // Fetch leads data from API or database
     setLeads(fetchedLeads);
-  }, []);
+  }, [fetchedLeads]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const handleFilterclear=()=>{
+  const handleFilterclear = () => {
     setLeads(fetchedLeads);
     setFilterModalOpen(false);
-  }
+  };
 
   const handleStatusChange = (id, status) => {
     setLeads((prevLeads) =>
@@ -78,7 +60,7 @@ const LeadsPage = () => {
 
   const handleFilterApply = () => {
     setLeads(fetchedLeads);
-    console.log(minfilterValue,maxfilterValue)
+    console.log(minfilterValue, maxfilterValue);
     // Apply the selected filter
     if (selectedFilter && filterValue) {
       setLeads((prevLeads) =>
@@ -90,9 +72,7 @@ const LeadsPage = () => {
           } else if (selectedFilter === "Name") {
             return lead.name.toLowerCase().includes(filterValue.toLowerCase());
           } else if (selectedFilter === "Amount Range") {
-            
             const askedAmount = parseFloat(lead.askedAmount.replace(/[$,]/g, ""));
-            console.log(askedAmount >= parseFloat(minfilterValue) && askedAmount <= parseFloat(maxfilterValue))
             return askedAmount >= parseFloat(minfilterValue) && askedAmount <= parseFloat(maxfilterValue);
           }
           return true;
@@ -106,7 +86,7 @@ const LeadsPage = () => {
     setExpandedRow(expandedRow === id ? null : id);
   };
 
-  const filteredLeads = leads?.filter(
+  const filteredLeads = leadsState.filter(
     (lead) =>
       lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.maskedPan.includes(searchTerm) ||
@@ -163,8 +143,7 @@ const LeadsPage = () => {
               {filteredLeads.map((lead) => (
                 <React.Fragment key={lead.id}>
                   <tr
-                    className={`cursor-pointer ${expandedRow === lead.id?"bg-green-100":"bg-transparent"}`}
-                    
+                    className={`cursor-pointer ${expandedRow === lead.id ? "bg-green-100" : "bg-transparent"}`}
                   >
                     <td className="px-6 py-4">{lead.name}</td>
                     <td className="px-6 py-4">{lead.maskedPan}</td>
@@ -187,13 +166,15 @@ const LeadsPage = () => {
                       <button
                         className="bg-green-500 text-white px-4 py-2 rounded-lg mr-2"
                         onClick={() =>
-                          setLeads((prevLeads) =>
+                          {setLeads((prevLeads) =>
                             prevLeads.map((l) =>
                               l.id === lead.id
                                 ? { ...l, status: "contacted" }
                                 : l
                             )
                           )
+                          alert("loan accepted")
+                        }
                         }
                       >
                         Accept
@@ -201,32 +182,40 @@ const LeadsPage = () => {
                       <button
                         className="bg-red-500 text-white px-4 py-2 rounded-lg"
                         onClick={() =>
-                          setLeads((prevLeads) =>
+                          {setLeads((prevLeads) =>
                             prevLeads.map((l) =>
                               l.id === lead.id
                                 ? { ...l, status: "rejected" }
                                 : l
                             )
                           )
+                          alert("loan rejected")}
                         }
                       >
                         Reject
                       </button>
-                      {/* onclick */}
-                       <span className="flex items-center ml-10  rounded-full text-3xl" onClick={() => handleRowExpand(lead.id)}>{expandedRow === lead.id ? <IoArrowUpCircleOutline/>:<IoArrowDownCircleOutline />}</span>
+                      <span
+                        className="flex items-center ml-10 rounded-full text-3xl"
+                        onClick={() => handleRowExpand(lead.id)}
+                      >
+                        {expandedRow === lead.id ? (
+                          <IoArrowUpCircleOutline />
+                        ) : (
+                          <IoArrowDownCircleOutline />
+                        )}
+                      </span>
                     </td>
                   </tr>
                   {expandedRow === lead.id && (
                     <tr className="bg-green-100">
-                      <td colSpan="6" className="px-6 py-4 ">
+                      <td colSpan="6" className="px-6 py-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                           <div>
                             <p>
                               <strong>KW Applied:</strong> {lead.kwApplied}
                             </p>
                             <p>
-                              <strong>Avg Electricity Bill:</strong>{" "}
-                              {lead.avgElectricityBill}
+                              <strong>Avg Electricity Bill:</strong> {lead.avgElectricityBill}
                             </p>
                             <p>
                               <strong>Address:</strong> {lead.address}
@@ -235,22 +224,19 @@ const LeadsPage = () => {
                           <div>
                             <p>
                               <strong>Rejection Reason:</strong>{" "}
-                              {lead.rejectionReason || "N/A"}
+                              {lead.rejectionReason}
                             </p>
                             <p>
                               <strong>Loan Tenure:</strong> {lead.loanTenure}
                             </p>
                             <p>
-                              <strong>
-                                <a
-                                  href={lead.installationProposal}
-                                  className="text-teal-500 underline"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
-                                  Link to Installation Proposal
-                                </a>
-                              </strong>
+                              <strong>Installation Proposal:</strong>{" "}
+                              <a
+                                href={lead.installationProposal}
+                                className="text-blue-600 hover:underline"
+                              >
+                                View Proposal
+                              </a>
                             </p>
                           </div>
                         </div>
@@ -263,66 +249,87 @@ const LeadsPage = () => {
           </table>
         </div>
       </div>
+      {/* Filter Modal */}
       {filterModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-            <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-semibold ">Select Filter</h2>
-            <button type="button" className="px-2 py-1 border border-gray-700 rounded-md " onClick={handleFilterclear}>Clear filters</button>
-            </div>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg">
+            <h2 className="text-xl font-bold mb-4">Filter Leads</h2>
             <div className="mb-4">
+              <label
+                htmlFor="filter-type"
+                className="block text-gray-700 font-semibold mb-2"
+              >
+                Filter by:
+              </label>
               <select
+                id="filter-type"
                 value={selectedFilter}
                 onChange={(e) => setSelectedFilter(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                className="border border-gray-300 rounded-full py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
               >
-                <option value="">Choose Filter Type</option>
-                <option value="Date">Date</option>
-                <option value="Status">Status</option>
                 <option value="Name">Name</option>
+                <option value="Status">Status</option>
+                <option value="Date">Date</option>
                 <option value="Amount Range">Amount Range</option>
               </select>
             </div>
             <div className="mb-4">
+              <label
+                htmlFor="filter-value"
+                className="block text-gray-700 font-semibold mb-2"
+              >
+                {selectedFilter === "Amount Range"
+                  ? "Min Amount:"
+                  : "Filter Value:"}
+              </label>
               {selectedFilter === "Amount Range" ? (
-                <div className="flex justify-center items-center space-x-4">
-                <input
-                  type="text"
-                  value={minfilterValue}
-                  onChange={(e) => setminfilterValue(e.target.value)}
-                  placeholder="Min amount"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                />
-                <input
-                  type="text"
-                  value={maxfilterValue}
-                  onChange={(e) => setmaxfilterValue(e.target.value)}
-                  placeholder="Max amount"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
-                />
-                </div>
+                <>
+                  <input
+                    type="number"
+                    id="min-filter-value"
+                    value={minfilterValue}
+                    onChange={(e) => setminfilterValue(e.target.value)}
+                    className="border border-gray-300 rounded-full py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-teal-500 mb-4"
+                    placeholder="Min Amount"
+                  />
+                  <label
+                    htmlFor="max-filter-value"
+                    className="block text-gray-700 font-semibold mb-2"
+                  >
+                    Max Amount:
+                  </label>
+                  <input
+                    type="number"
+                    id="max-filter-value"
+                    value={maxfilterValue}
+                    onChange={(e) => setmaxfilterValue(e.target.value)}
+                    className="border border-gray-300 rounded-full py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
+                    placeholder="Max Amount"
+                  />
+                </>
               ) : (
                 <input
                   type="text"
+                  id="filter-value"
                   value={filterValue}
                   onChange={(e) => setFilterValue(e.target.value)}
-                  placeholder={`Enter ${selectedFilter}`}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2"
+                  className="border border-gray-300 rounded-full py-2 px-4 w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  placeholder="Enter value"
                 />
               )}
             </div>
             <div className="flex justify-end">
               <button
-                onClick={handleFilterApply}
-                className="bg-teal-600 text-white px-4 py-2 rounded-lg mr-2"
+                onClick={handleFilterclear}
+                className="bg-red-500 text-white px-4 py-2 rounded-lg mr-2"
               >
-                Apply
+                Clear
               </button>
               <button
-                onClick={() => setFilterModalOpen(false)}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                onClick={handleFilterApply}
+                className="bg-teal-600 text-white px-4 py-2 rounded-lg"
               >
-                Cancel
+                Apply Filter
               </button>
             </div>
           </div>

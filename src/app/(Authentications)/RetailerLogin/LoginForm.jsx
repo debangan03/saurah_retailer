@@ -32,7 +32,7 @@ function LoginForm() {
         toast.success("Login successful!", { id: "login-toast" });
         // You can redirect to a different page after successful login
         localStorage.setItem('token',data.token)
-        window.location="/";
+        window.location="/RetailerDashboard";
       } else {
         toast.error("Invalid email or password. Please try again.", {
           id: "login-toast",
