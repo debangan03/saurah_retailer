@@ -136,7 +136,7 @@ function Profile({ leads,changecompo }) {
               </div>
             ) : (
               <div className="space-y-4">
-                <h2 className="text-2xl font-semibold text-gray-800">
+                <h2 className="text-2xl capitalize font-semibold text-gray-800">
                   {user.name}
                 </h2>
                 <p className="text-gray-600">Email: {user.email}</p>
@@ -148,7 +148,7 @@ function Profile({ leads,changecompo }) {
         </div>
         <div className="h-[300px] bg-gray-400 mt-4 w-[1px] hidden lg:block"></div>
         <div className="profile lg:w-[45%] lg:bg-neutral-100 bg-white  lg:shadow-none shadow-md rounded p-6 relative ">
-          <div className="absolute top-3 right-3 cursor-pointer text-gray-600 hover:text-gray-800">
+          <div className="absolute top-3 right-3  cursor-pointer text-gray-600 hover:text-gray-800">
             <Link
               target="_blank"
               href="/ApplyLoan"

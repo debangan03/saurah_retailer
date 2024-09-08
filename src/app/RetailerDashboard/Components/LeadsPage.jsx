@@ -108,12 +108,20 @@ const LeadsPage = ({ leads }) => {
             />
             <FaSearch className="absolute right-3 top-3 text-gray-400" />
           </div>
+          <div className="flex flex-between space-x-4">
+          <button
+            onClick={handleFilterOpen}
+            className="flex items-center bg-teal-600 text-white px-4 py-2 rounded-full hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
+          >
+            + Add Lead
+          </button>
           <button
             onClick={handleFilterOpen}
             className="flex items-center bg-teal-600 text-white px-4 py-2 rounded-full hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             <FaFilter className="mr-2" /> Filter
           </button>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white border border-gray-200 rounded-lg">
@@ -163,7 +171,7 @@ const LeadsPage = ({ leads }) => {
                       </span>
                     </td>
                     <td className="px-6 py-4 flex space-x-2">
-                      <button
+                      {/* <button
                         className="bg-green-500 text-white px-4 py-2 rounded-lg mr-2"
                         onClick={() =>
                           {setLeads((prevLeads) =>
@@ -193,11 +201,11 @@ const LeadsPage = ({ leads }) => {
                         }
                       >
                         Reject
-                      </button>
+                      </button> */}
                       <span
-                        className="flex items-center ml-10 rounded-full text-3xl"
+                        className="flex items-center rounded-full text-3xl"
                         onClick={() => handleRowExpand(lead.id)}
-                      >
+                      ><span className="text-sm">View&nbsp;</span>
                         {expandedRow === lead.id ? (
                           <IoArrowUpCircleOutline />
                         ) : (
