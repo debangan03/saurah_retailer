@@ -110,7 +110,7 @@ const LeadsPage = ({ leads }) => {
           </div>
           <div className="flex flex-between space-x-4">
           <button
-            onClick={handleFilterOpen}
+            onClick={()=>{window.location=`/ApplyLoan`}}
             className="flex items-center bg-teal-600 text-white px-4 py-2 rounded-full hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             + Add Lead

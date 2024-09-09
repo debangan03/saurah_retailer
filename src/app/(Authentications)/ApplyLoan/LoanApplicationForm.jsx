@@ -1,4 +1,5 @@
 "use client";
+import { solarcalculatorfunction } from "@/app/(Utilities)/SolarCalculator/solarcalculatorfunction";
 import { useAuth } from "@/app/Context/AuthContext";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
@@ -29,11 +30,22 @@ const LoanApplicationForm = () => {
     email: "",
     phone: "",
     panNo: "",
-    address: "",
     electricityAccountNo: "",
     electricityBill: "",
     amountForLoan: "",
+    electricityProvider: "", // New field
+    unitCharges: "6.29", // New field
+    baseCharges: "200", // New field
   });
+
+  const electricityProviders = [
+    "APEPDCL", "APSPDCL", "APDCL", "NBPDCL", "SBPDCL", "CH_ELEC",
+    "CSPDCL", "DNH", "MUNCIPAL_DL", "TATA_DL", "UPAY_GOA", "GOA_ELEC",
+    "MGVCL", "PGVCL", "UGVCL", "DGVCL", "DHBVN", "UHBVN", "HESCOM",
+    "BESCOM", "GESCOM", "MESCOM", "CESCOM", "KSEB", "MPCZ", "MPEZ",
+    "MPWZ", "RELIANCE_MH", "MSEDCL", "TATA_MUMBAI", "NAGALAND", "ORISSA_CENTRAL",
+    "ORISSA", "PSPCL", "SIKKIM", "TNEB", "TSSPDCL", "UPCL", "CESC", "WBSEDCL"
+  ];
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [billFound, setBillFound] = useState(false);
@@ -70,18 +82,19 @@ const LoanApplicationForm = () => {
     setIsSubmitting(true);
 
     try {
+      
+      const loanamount= solarcalculatorfunction(parseFloat(formData.electricityBill),parseFloat(formData.unitCharges),parseFloat(formData.baseCharges)).total_cost;
       // Simulate API call delay (remove this in actual implementation)
       await new Promise((resolve) => setTimeout(resolve, 2000));
       console.log(formData);
       
-
       // Replace with actual API call
       const response = await fetch("/api/applyloanforcustomer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({...formData,retailerId:user?.id}),
+        body: JSON.stringify({...formData,retailerId:user?.id,loanamount:loanamount}),
       });
 
       if (!response.ok) {
@@ -168,7 +181,7 @@ const LoanApplicationForm = () => {
               required
             />
           </div>
-          <div className="col-span-1 lg:col-span-2">
+          {/* <div className="col-span-1 lg:col-span-2">
             <label htmlFor="address" className="block text-gray-700">Address</label>
             <input
               type="text"
@@ -179,7 +192,7 @@ const LoanApplicationForm = () => {
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               required
             />
-          </div>
+          </div> */}
           <div>
             <label htmlFor="electricityAccountNo" className="block text-gray-700">Electricity Account No.</label>
             <input
@@ -193,7 +206,25 @@ const LoanApplicationForm = () => {
             />
           </div>
           <div>
-            <label htmlFor="electricityBill" className="block text-gray-700">Electricity Bill</label>
+            <label htmlFor="electricityProvider" className="block text-gray-700">Electricity Provider</label>
+            <input
+              type="text"
+              list="electricityProviders"
+              id="electricityProvider"
+              name="electricityProvider"
+              value={formData.electricityProvider}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              required
+            />
+            <datalist id="electricityProviders">
+              {electricityProviders.map((provider) => (
+                <option key={provider} value={provider} />
+              ))}
+            </datalist>
+          </div>
+          <div>
+            <label htmlFor="electricityBill" className="block text-gray-700">Average Electricity Bill (last 6 months)</label>
             {billFound ? (
               <div className="mt-1 block w-full border border-gray-300 rounded-md p-2 bg-gray-100">
                 {formData.electricityBill}
@@ -211,6 +242,31 @@ const LoanApplicationForm = () => {
             )}
           </div>
           <div>
+            <label htmlFor="unitCharges" className="block text-gray-700">Unit Charges (in ₹)</label>
+            <input
+              type="number"
+              id="unitCharges"
+              name="unitCharges"
+              value={formData.unitCharges}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="baseCharges" className="block text-gray-700">Base Charges (in ₹)</label>
+            <input
+              type="number"
+              id="baseCharges"
+              name="baseCharges"
+              value={formData.baseCharges}
+              onChange={handleChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              required
+            />
+          </div>
+          
+          {/* <div>
             <label htmlFor="amountForLoan" className="block text-gray-700">Amount for Loan</label>
             <input
               type="number"
@@ -221,7 +277,7 @@ const LoanApplicationForm = () => {
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               required
             />
-          </div>
+          </div> */}
           <div className="col-span-1 lg:col-span-2">
             <button
               type="submit"

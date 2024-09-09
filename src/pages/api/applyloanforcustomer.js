@@ -18,7 +18,10 @@ const handler = async (req, res) => {
         address,
         electricityAccountNo,
         electricityBill,
-        amountForLoan,
+        electricityProvider,
+        unitCharges,
+        baseCharges,
+        loanamount
       } = req.body;
 
       const newApplication = new LoanApplication({
@@ -30,7 +33,10 @@ const handler = async (req, res) => {
         address,
         electricityAccountNo,
         electricityBill,
-        amountForLoan,
+        amountForLoan:loanamount,
+        electricityProvider,
+        unitCharges,
+        baseCharges
       });
 
       await newApplication.save();
