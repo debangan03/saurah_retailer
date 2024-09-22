@@ -19,6 +19,7 @@ const cibilusercheckSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
+    cibil:Object,
   },
   { timestamps: true }
 );
