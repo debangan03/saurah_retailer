@@ -65,6 +65,8 @@ function RetailerRegistrationForm() {
         body: JSON.stringify({ panNumber:panNo }),
       });
       const data1 = await response.json();
+      //console.log(data1);
+      
 
       if (!data1.success) {
         throw new Error("Failed to validate PAN");

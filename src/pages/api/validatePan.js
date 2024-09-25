@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   
         res.setHeader("Access-Control-Allow-Origin", "*");
         if (!data?.result?.isIndividual && !data?.result?.isValid)
-          res.status(200).json({ success: true, data: data });
+          res.status(200).json({ success: false, data: data });
         else throw new Error("not found");
         
       } catch (e) {
