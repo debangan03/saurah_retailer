@@ -67,3 +67,12 @@ input[type=number] {
 .custom-shape-divider-top-1722285751 .shape-fill {
   fill: #50E3C2;
 }
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

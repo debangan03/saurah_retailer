@@ -1,18 +1,23 @@
+
+
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/Context/AuthContext";
+import PrivacyPolicy from "./Privacydocs";
+import PrivacyPolicydocs from "./Privacydocs";
 
 function RetailerRegistrationForm() {
+  const [privacyopen, setprivacyopen] = useState(false)
   const router = useRouter();
   const session = useAuth();
-  
+
   useEffect(() => {
     if (session.user) {
       alert("Already logged in");
       setTimeout(() => {
-        router.push('/');
+        router.push("/");
       }, 400);
     }
   }, [session.user, router]);
@@ -31,16 +36,21 @@ function RetailerRegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPanValid, setIsPanValid] = useState(null); // null indicates no validation yet
   const [panErrorMessage, setPanErrorMessage] = useState("");
+  const [agreedToPolicy, setAgreedToPolicy] = useState(false); // New state for checkbox
 
   let timeoutId = null;
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (type === "checkbox") {
+      setAgreedToPolicy(checked);
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
 
     // Validate PAN number when it changes
     if (name === "panNo") {
@@ -62,18 +72,15 @@ function RetailerRegistrationForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ panNumber:panNo }),
+        body: JSON.stringify({ panNumber: panNo }),
       });
       const data1 = await response.json();
-      //console.log(data1);
-      
 
       if (!data1.success) {
         throw new Error("Failed to validate PAN");
       }
 
-      // const data = await response.json();
-      setIsPanValid(data1.success); // Assume the response has an `isValid` field
+      setIsPanValid(data1.success);
 
       if (data1.success) {
         setPanErrorMessage("");
@@ -128,7 +135,15 @@ function RetailerRegistrationForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, otp, name, panNo, gstNo, mobileNo, password }),
+        body: JSON.stringify({
+          email,
+          otp,
+          name,
+          panNo,
+          gstNo,
+          mobileNo,
+          password,
+        }),
       });
 
       if (!response.ok) {
@@ -136,10 +151,10 @@ function RetailerRegistrationForm() {
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.token);
+      localStorage.setItem("token", data.token);
 
       alert("OTP verified successfully. Registration complete.");
-      window.location = '/'; // Redirect to the desired page after registration
+      window.location = "/"; // Redirect to the desired page after registration
     } catch (error) {
       console.error("Error:", error);
       alert("Error verifying OTP");
@@ -150,23 +165,71 @@ function RetailerRegistrationForm() {
 
   return (
     <div className="lg:mx-auto max-w-7xl my-6 p-4 border shadow-md border-gray-400 rounded-lg mx-10">
+      {privacyopen &&<div className="fixed  flex justify-center items-center top-0 left-0 w-screen h-screen backdrop-blur-md bg-white/30">
+      <div
+      className="relative xl:h-[600px] overflow-auto xl:w-[900px] no-scrollbar  w-screen h-screen">
+        <span className="absolute right-6 top-6 hover:font-bold text-red-500 cursor-pointer" onClick={()=>{setprivacyopen(false)}}>X</span>
+        <PrivacyPolicydocs/>
+
+      </div>
+        
+        </div>}
       <h2 className="text-xl font-semibold">Retailer Registration</h2>
       {!otpSent ? (
         <form onSubmit={handleSubmit}>
           <div className="lg:grid lg:grid-cols-2 gap-6 mb-4">
             {/* Form fields */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Retailer Name</label>
-              <input placeholder="fill your credentials" type="text" name="name" id="name" value={formData.name} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Retailer Name
+              </label>
+              <input
+                placeholder="fill your credentials"
+                type="text"
+                name="name"
+                id="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+              />
             </div>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-              <input placeholder="fill your credentials" type="email" name="email" id="email" value={formData.email} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email
+              </label>
+              <input
+                placeholder="fill your credentials"
+                type="email"
+                name="email"
+                id="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+              />
             </div>
-            
+
             <div>
-              <label htmlFor="panNo" className="block text-sm font-medium text-gray-700">PAN No</label>
-              <input placeholder="fill your credentials" type="text" name="panNo" id="panNo" value={formData.panNo} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+              <label
+                htmlFor="panNo"
+                className="block text-sm font-medium text-gray-700"
+              >
+                PAN No
+              </label>
+              <input
+                placeholder="fill your credentials"
+                type="text"
+                name="panNo"
+                id="panNo"
+                value={formData.panNo}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+              />
               {isPanValid !== null && (
                 <div className="mt-1">
                   {isPanValid ? (
@@ -178,37 +241,135 @@ function RetailerRegistrationForm() {
               )}
             </div>
             <div>
-              <label htmlFor="gstNo" className="block text-sm font-medium text-gray-700">GST No</label>
-              <input placeholder="fill your credentials" type="text" name="gstNo" id="gstNo" value={formData.gstNo} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+              <label
+                htmlFor="gstNo"
+                className="block text-sm font-medium text-gray-700"
+              >
+                GST No
+              </label>
+              <input
+                placeholder="fill your credentials"
+                type="text"
+                name="gstNo"
+                id="gstNo"
+                value={formData.gstNo}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+              />
             </div>
             <div>
-              <label htmlFor="mobileNo" className="block text-sm font-medium text-gray-700">Mobile No</label>
-              <input placeholder="fill your credentials" type="tel" name="mobileNo" id="mobileNo" value={formData.mobileNo} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+              <label
+                htmlFor="mobileNo"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Mobile No
+              </label>
+              <input
+                placeholder="fill your credentials"
+                type="tel"
+                name="mobileNo"
+                id="mobileNo"
+                value={formData.mobileNo}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+              />
             </div>
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-              <input placeholder="fill your credentials" type="password" name="password" id="password" value={formData.password} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
+              <input
+                placeholder="fill your credentials"
+                type="password"
+                name="password"
+                id="password"
+                value={formData.password}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+              />
             </div>
           </div>
-          <p className="text-[.8rem] pl-1 mb-1">Already have an account <Link className="text-teal-500 underline font-semibold " href="/RetailerLogin">Login</Link></p>
+
+          {/* Privacy Policy checkbox */}
+          <div className="mb-4">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="privacyPolicy"
+                checked={agreedToPolicy}
+                onChange={handleChange}
+                className="mr-2"
+              />
+              <span className="text-sm text-gray-700">
+                I agree to the{" "}
+                <span
+                  onClick={()=>setprivacyopen(true)}
+                  className="text-teal-500 underline"
+                >
+                  Privacy Policy
+                </span>
+              </span>
+            </label>
+          </div>
+
+          <p className="text-[.8rem] pl-1 mb-1">
+            Already have an account{" "}
+            <Link
+              className="text-teal-500 underline font-semibold "
+              href="/RetailerLogin"
+            >
+              Login
+            </Link>
+          </p>
           <div>
-            <button type="submit" disabled={isSubmitting || isPanValid === false} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-              {isSubmitting ? 'Loading...' : 'Register'}
+            <button
+              type="submit"
+              disabled={isSubmitting || isPanValid === false || !agreedToPolicy ||name== ""||
+                email== ""||
+                panNo== ""||
+                gstNo== ""||
+                mobileNo== ""||
+                password== ""||
+                otp== ""}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400"
+            >
+              {isSubmitting ? "Loading..." : "Register"}
             </button>
           </div>
         </form>
       ) : (
         <form onSubmit={handleOtpSubmit}>
-          <div className="mb-4">
-            <label htmlFor="otp" className="block text-sm font-medium text-gray-700">OTP</label>
-            <input placeholder="fill your credentials" type="text" name="otp" id="otp" value={formData.otp} onChange={handleChange} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500" />
-          </div>
-          <div>
-            <button type="submit" disabled={isSubmitting} className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
-              {isSubmitting ? 'Loading...' : 'Verify OTP'}
-            </button>
-          </div>
-        </form>
+        <div className="mb-4">
+          <label
+            htmlFor="otp"
+            className="block text-sm font-medium text-gray-700"
+          >
+            OTP
+          </label>
+          <input
+            placeholder="fill your credentials"
+            type="text"
+            name="otp"
+            id="otp"
+            value={formData.otp}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500"
+          />
+        </div>
+        <div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+          >
+            {isSubmitting ? "Loading..." : "Verify OTP"}
+          </button>
+        </div>
+      </form>
       )}
     </div>
   );
